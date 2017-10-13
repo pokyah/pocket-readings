@@ -2,15 +2,15 @@
 	<head>
 		<title>Pocket Reads</title>
     <meta charset="UTF-8">
-		<script type="text/javascript" src="js/ICanHaz.js"></script> 
+		<script type="text/javascript" src="js/ICanHaz.js"></script>
 		<script type="text/javascript" src='js/jquery.js '></script>
     <script type="text/javascript" src='js/tabletop.js'></script>
     <script type="text/javascript" src='js/site.js'></script>
 		<script type="text/javascript" src='js/sheetsee.js'></script>
-    
+
 		<link rel="shortcut icon" href="https://raw.github.com/jlord/sheetsee-pocket/master/favicon-p.png"/>
 		<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-		<link media="screen" rel="stylesheet" type="text/css" href="css/style.css"> 
+		<link media="screen" rel="stylesheet" type="text/css" href="css/style.css">
 	</head>
 <body>
 	<div id="wrapper">
@@ -24,8 +24,8 @@
 
 		<div id="filters" class="container">
 			<input id="articleSearch" type="text" placeholder="Search for.."></input>
-			<span class="clear sml-button">Clear</span> 
-      <h3>Tags <span id="tags"></span>   
+			<span class="clear sml-button">Clear</span>
+      <h3>Tags <span id="tags"></span>
     </div>
 
 		<div id="articleTable"></div>
@@ -60,8 +60,8 @@
     document.addEventListener('DOMContentLoaded', function() {
       var URL = "1h4FaVnt3EyoA4_WYPiokEBdwDBcszInIudsreNL27Yk"
       Tabletop.init( { key: URL, callback: showInfo, simpleSheet: true } )
-    }) 
-      
+    })
+
     function showInfo(data) {
       var gData = separateTags(data)
       drawTags(gData)
@@ -71,8 +71,23 @@
       Sheetsee.initiateTableFilter(gData, "#articleSearch", "#articleTable")
 
       $(document).on("click", ".tag", function(event){
-        var tag = $(event.target).text()
-        var tagFilter = getTagMatches(gData, tag)
+        var newTag = $(event.target);
+
+				if(newTag.hasClass("hovered")){
+					newTag.removeClass("hovered")
+				}
+				else{
+					newTag.addClass("hovered")
+				}
+
+				var tags = $(".hovered");
+				var textTags = [];
+
+				tags.each(function(i) {
+				  textTags.push($( this ).text() );
+				});
+
+				var tagFilter = getTagMatches(gData, textTags)
         Sheetsee.makeTable(tagFilter.reverse(), "#articleTable")
       })
     }

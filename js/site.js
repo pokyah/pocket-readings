@@ -1,5 +1,5 @@
 // goes through all the tags and generates
-// an array of the different tags used 
+// an array of the different tags used
 function existingTagsList(data) {
 	var existingTags = []
 	data.forEach(function getTagArray(row) {
@@ -54,14 +54,17 @@ function getTagMatches(data, selectedTag) {
     var elTags = element.tags
     if (elTags === "") return
     elTags.forEach(function (tag) {
-      if (tag["tag"] === selectedTag.trim()) matches.push(element)
+      //if (tag["tag"] === selectedTag.trim()) matches.push(element)
+			selectedTag.forEach(function(el){
+				if (tag["tag"] === el) matches.push(element)
+			})
 
     })
   })
   return matches
 }
 
-// render the section of the page that 
+// render the section of the page that
 // lists the tags
 function drawTags(data) {
   var tag = existingTagsList(data)
