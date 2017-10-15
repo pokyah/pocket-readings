@@ -51,15 +51,30 @@ function arrayIntoObjects(array) {
 function getTagMatches(data, selectedTag) {
   var matches = []
   data.forEach(function (element) {
-    var elTags = element.tags
-    if (elTags === "") return
-    elTags.forEach(function (tag) {
+    var elTags = element.tags;
+		var elTagsArray = [];
+    if (elTags === "") return;
+
+		for (var i = 0; i < elTags.length; i++) {
+    	elTagsArray.push(elTags[i].tag);
+		}
+
+		var filter = elTagsArray .filter((n) => selectedTag.includes(n));
+
+		filter.sort();
+		selectedTag.sort();
+
+		if (filter.toString() == selectedTag.toString()){
+			matches.push(element)
+		}
+    /*elTags.forEach(function (tag) {
+
       //if (tag["tag"] === selectedTag.trim()) matches.push(element)
 			selectedTag.forEach(function(el){
 				if (tag["tag"] === el) matches.push(element)
 			})
 
-    })
+    })*/
   })
   return matches
 }
@@ -68,6 +83,11 @@ function getTagMatches(data, selectedTag) {
 // lists the tags
 function drawTags(data) {
   var tag = existingTagsList(data)
+
+	tag.sort(function (a, b) {
+  	return a.localeCompare(b);
+	});
+
   var contents = ich.tags({
     rows: tag
   })
