@@ -55,8 +55,11 @@ function getTagMatches(data, selectedTag) {
     var elTags = element.tags;
     if (elTags === "") return;
     elTagsArr = elTags.map(a => a.tag);
-    var isSuperset = selectedTag.every(function(val) { return 
-elTagsArr.indexOf(val) >= 0; });
+    //https://stackoverflow.com/questions/8628059/check-if-every-element-in-one-array-is-in-a-second-array
+    var isSuperset = selectedTag.every(function(val) {
+      return elTagsArr.indexOf(val) >= 0; 
+    });
+      
     if (isSuperset === true) matches.push(element);
     //elTags.forEach(function (tag) {
       //function containsAny(source,target){
@@ -71,7 +74,7 @@ elTagsArr.indexOf(val) >= 0; });
       //if (tag["tag"] === selectedTag.trim()) matches.push(element)
 			//selectedTag.forEach(function(el){
 			//	if (tag["tag"] === el) 
-matches.push(element);
+      // matches.push(element);
 			//});
 
     //});
