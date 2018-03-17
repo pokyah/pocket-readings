@@ -53,6 +53,7 @@
 
 		        <a class="mdl-navigation__link" href="#info">About</a>
 		        <a class="mdl-navigation__link" href="https://about.me/pokyah/">Pokyah</a>
+						<span id="selectedCounter" class="material-icons mdl-badge mdl-badge--overlap" data-badge="0">folder_special</span>
 						<a class="mdl-navigation__link" href=""><i class="material-icons">share</i></a>
 						<!-- Left aligned menu below button -->
 
@@ -107,14 +108,14 @@
 
 
 	<script id="title" type="text/html">
-		<div class="material-icons mdl-badge mdl-badge--overlap" data-badge="{{numArticles}}">folder_special</div>
+		<a>{{numArticles}} </a>
 		<span>articles from <a href="https://getpocket.com/a/queue/" class="tag mdl-chip__text">Pocket</a></span>
 	</script>
 
   <script id="tags" type="text/html">
     {{#rows}}
-		<span class="mdl-chip">
-			<span href="#" class="tag mdl-chip__text">{{.}}</span>
+		<span href="#" class="tag mdl-chip">
+			<span class="mdl-chip__text">{{.}}</span>
 		</span>
     {{/rows}}
   </script>
@@ -122,92 +123,114 @@
 	<script id="articleTable" type="text/html">
 	<ul class="demo-list-control mdl-list">
 	{{#rows}}
-  <li class="mdl-list__item">
-    <span class="mdl-list__item-primary-content">
-      <i class="material-icons  mdl-list__item-avatar">bookmark</i>
-      <span>{{article}}</span>{{#tags}}
-			<span class="mdl-list__item-text-body tag">
-					<span><a href="">
-							{{tag}},
-					</a></span>
-				</span>{{/tags}}
-			</button>
-    </span>
-    <span class="mdl-list__item-secondary-action">
-      <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="list-checkbox-1">
-        <input type="checkbox" id="list-checkbox-1" class="mdl-checkbox__input" checked />
-      </label>
-    </span>
-  </li>
+	<li id="{{rowNumber}}" class="mdl-list__item mdl-list__item--three-line">
+		<span class="mdl-list__item-primary-content">
+			<i class="material-icons mdl-list__item-avatar">person</i>
+			<span><a href="{{url}}" target="_blank">{{article}}</a></span><span> (added : {{date}})</span>
+			<span class="mdl-list__item-text-body">
+				{{excerpt}}
+				<span class="mdl-list__item-sub-title">
+				{{#tags}}
+					<a class="item-tags">{{tag}}, </a>
+				{{/tags}}
+				</span>
+			</span>
+		</span>
+		<span class="mdl-list__item-secondary-content">
+			<p>ref : {{rowNumber}}</p>
+			<a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">star</i></a>
+		</span>
+	</li>
 	{{/rows}}
 	</ul>
 </script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var URL = "1h4FaVnt3EyoA4_WYPiokEBdwDBcszInIudsreNL27Yk"
+    Tabletop.init( { key: URL, callback: showInfo, simpleSheet: true } )
+  })
 
+  function showInfo(data) {
+    var gData = separateTags(data)
+    drawTags(gData)
+    cleanDates(gData)
+    pageTitle(gData)
+    Sheetsee.makeTable(gData.reverse(), "#articleTable")
+    Sheetsee.initiateTableFilter(gData, "#articleSearch", "#articleTable")
 
+		var count = 0;
+		var url = window.location.href
+		var query = url.substring(url.indexOf('q?')+1)
+		var queryArray = []
 
+		if(query !== ""){
+			queryArray.push(query)
+			queryFilter = getTagMatches(gData, queryArray)
+			Sheetsee.makeTable(queryFilter.reverse(), "#articleTable");
+		}
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var URL = "1h4FaVnt3EyoA4_WYPiokEBdwDBcszInIudsreNL27Yk"
-      Tabletop.init( { key: URL, callback: showInfo, simpleSheet: true } )
-    })
+		/*$("#articleTable .element").on("click" , function(event){
+			var newElement = $(event.target);
+			newElement = newElement.parents(".element");
 
-    function showInfo(data) {
-      var gData = separateTags(data)
-      drawTags(gData)
-      cleanDates(gData)
-      pageTitle(gData)
-      Sheetsee.makeTable(gData.reverse(), "#articleTable")
-      Sheetsee.initiateTableFilter(gData, "#articleSearch", "#articleTable")
+			if(newElement.hasClass("hovered")){
+				newElement.removeClass("hovered")
+			}
+			else{
+				newElement.addClass("hovered")
+			}
+		})*/
 
-			var url = window.location.href
-			var hash = url.substring(url.indexOf('#')+1)
-			var hashArray = []
+    $(document).on("click", ".tag" , function(event){
+      var newTag = $(event.target);
 
-			if(hash !== ""){
-				hashArray.push(hash)
-				hashFilter = getTagMatches(gData, hashArray)
-				Sheetsee.makeTable(hashFilter.reverse(), "#articleTable");
+			if(newTag.hasClass("hovered")){
+				newTag.removeClass("hovered")
+			}
+			else{
+				newTag.addClass("hovered")
 			}
 
-			/*$("#articleTable .element").on("click" , function(event){
-				var newElement = $(event.target);
-				newElement = newElement.parents(".element");
+			var tags = $(".hovered");
+			var textTags = [];
 
-				if(newElement.hasClass("hovered")){
-					newElement.removeClass("hovered")
-				}
-				else{
-					newElement.addClass("hovered")
-				}
-			})*/
+			tags.each(function(i) {
+			  textTags.push($( this ).text() );
+			});
 
-      $(document).on("click", ".tag" , function(event){
-        var newTag = $(event.target);
+			var tagFilter = getTagMatches(gData, textTags)
+      Sheetsee.makeTable(tagFilter.reverse(), "#articleTable")
+    })
 
-				if(newTag.hasClass("hovered")){
-					newTag.removeClass("hovered")
-				}
-				else{
-					newTag.addClass("hovered")
-				}
+		$(document).on("click", "li" , function(event){
 
-				var tags = $(".hovered");
-				var textTags = [];
+			var newItem = $(event.target);
+			var li = $(newItem).closest("li");
+			if(li.hasClass("selected")){
+				li.removeClass("selected")
+				count = count - 1;
+				$('#selectedCounter').attr('data-badge', count.toString())
+			}
+			else{
+				li.addClass("selected")
+				count = count + 1;
+				$('#selectedCounter').attr('data-badge', count.toString())
+			}
 
-				tags.each(function(i) {
-				  textTags.push($( this ).text() );
-				});
+			var lis = $(".selected");
+			var liElements = [];
 
-				var urlHash = textTags.join("&")
-				window.location.hash=urlHash;
+			lis.each(function(i) {
+				liElements.push($( this ).attr('id') );
+			});
 
-				var tagFilter = getTagMatches(gData, textTags)
-        Sheetsee.makeTable(tagFilter.reverse(), "#articleTable")
-      })
-    }
-  </script>
+			var queryUrl = liElements.join("&")
+			window.location.hash=queryUrl;
+
+		})
+  }
+</script>
 
 </body>
 </html>
