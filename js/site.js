@@ -1,9 +1,6 @@
 // goes through all the tags and generates
 // an array of the different tags used
 
-
-
-
 		function existingTagsList(data) {
 			var existingTags = [];
 			data.forEach(function getTagArray(row) {
@@ -15,8 +12,8 @@
 		      existingTags.push(tagString);
 		    });
 		  });
-		  existingTags.sort();
-		  return existingTags;
+			existingTags.sort();
+			return existingTags;
 		}
 
 		// originally the tags are a string, this separates
@@ -24,6 +21,11 @@
 		// individual links in the html
 		function separateTags(data) {
 			data.forEach(function findMultiTags(article) {
+
+				$.getJSON("./config.json", function(data) {
+					var items = [];
+				});
+
 				if (article.tags === "") return;
 				if (article.tags.indexOf(',') >= 0) {
 					var tagArray = parseTags(article.tags);
