@@ -21,11 +21,6 @@
 		// individual links in the html
 		function separateTags(data) {
 			data.forEach(function findMultiTags(article) {
-
-				$.getJSON("./config.json", function(data) {
-					var items = [];
-				});
-
 				if (article.tags === "") return;
 				if (article.tags.indexOf(',') >= 0) {
 					var tagArray = parseTags(article.tags);
@@ -92,10 +87,19 @@
 		// lists the tags
 		function drawTags(data) {
 		  var tag = existingTagsList(data);
-		  var contents = ich.tags({
-		    rows: tag
-		  });
-		  $('#tags').html(contents);
+			$.getJSON("./config.json", function(ctgs) {
+				var main_categories = ctgs.main_categories;
+				var categories = ctgs.categories;
+				var contents_categories = ich.tags({
+					rows: categories
+				});
+				var contents_main_categories = ich.tags({
+					rows: main_categories
+				});
+				$('#tags').html(contents_categories);
+
+				$('#tags').prepend(contents_main_categories);
+			});
 		}
 
 		// render the page title with its
